@@ -3,59 +3,59 @@ import requests
 from bs4 import BeautifulSoup
 from tqdm import tqdm
 
-# Substitua pelo URL do site com a lista de arquivos
+# replace the URL with the URL of the page you want to download files from
 URL = "https://class.devsamurai.com.br/" 
-PASTA_DESTINO = "downloads"  
+DESTINATION_FOLDER = "downloads2"  
 
-# Cria a pasta destino, se não existir
-os.makedirs(PASTA_DESTINO, exist_ok=True)
+# Create the destination folder if it doesn't exist
+os.makedirs(DESTINATION_FOLDER, exist_ok=True)
 
-def baixar_arquivo(url, caminho_destino):
-    """Baixa um arquivo do URL especificado e o salva no caminho fornecido, com barra de progresso."""
-    resposta = requests.get(url, stream=True)
-    if resposta.status_code == 200:
-        tamanho_total = int(resposta.headers.get('content-length', 0))
-        with open(caminho_destino, 'wb') as arquivo, tqdm(
-            total=tamanho_total,
+def baixar_arquivo(url, destination_path):
+    """Downloads a file from the specified URL and saves it to the path provided, with progress bar."""
+    response = requests.get(url, stream=True)
+    if response.status_code == 200:
+        total_file_size = int(response.headers.get('content-length', 0))
+        with open(destination_path, 'wb') as arquivo, tqdm(
+            total=total_file_size,
             unit='B',
             unit_scale=True,
-            desc=os.path.basename(caminho_destino),
+            desc=os.path.basename(destination_path),
             ncols=80
-        ) as barra:
-            for chunk in resposta.iter_content(chunk_size=1024):
+        ) as bar:
+            for chunk in response.iter_content(chunk_size=1024):
                 arquivo.write(chunk)
-                barra.update(len(chunk))
+                bar.update(len(chunk))
     else:
-        print(f"Erro ao baixar {url}: {resposta.status_code}")
+        print(f"Error downloading {url}: {response.status_code}")
 
-def encontrar_links(url):
-    """Encontra todos os links dentro de uma estrutura <ul><li><a>."""
+def extract_links_from_ul(url):
+    """Finds all links within a structure <ul><li><a>."""
     resposta = requests.get(url)
     if resposta.status_code == 200:
         soup = BeautifulSoup(resposta.text, 'html.parser')
-        # Encontra todos os links dentro de <ul><li>
+      
         return [link.get('href') for link in soup.select('ul li a[href]')]
     else:
         print(f"Erro ao acessar {url}: {resposta.status_code}")
         return []
 
-def baixar_arquivos_da_pagina(url, pasta_destino):
-    """Encontra e baixa arquivos de uma página da web."""
-    links = encontrar_links(url)
-    total_arquivos = len(links)
-    if total_arquivos == 0:
-        print("Nenhum arquivo encontrado para download.")
+def download_files_from_page(url, destination_folder):
+    """Finds and downloads files from a web page."""
+    links = extract_links_from_ul(url)
+    file_count = len(links)
+    if file_count == 0:
+        print("No files found for download.")
         return
 
-    print(f"Total de arquivos encontrados: {total_arquivos}\n")
+    print(f"Total files found: {file_count}\n")
     
     for i, link in enumerate(links, start=1):
 
-        arquivo_url = link if link.startswith('http') else f"{url}/{link}"
-        nome_arquivo = os.path.basename(link)
-        caminho_destino = os.path.join(pasta_destino, nome_arquivo)
+        file_url = link if link.startswith('http') else f"{url}/{link}"
+        file_name = os.path.basename(link)
+        destination_path = os.path.join(destination_folder, file_name)
         
-        print(f"Baixando arquivo {i} de {total_arquivos}: {nome_arquivo}")
-        baixar_arquivo(arquivo_url, caminho_destino)
+        print(f"Downloading files {i} de {file_count}: {file_name}")
+        baixar_arquivo(file_url, destination_path)
 
-baixar_arquivos_da_pagina(URL, PASTA_DESTINO)
+download_files_from_page(URL, DESTINATION_FOLDER)
