@@ -5,7 +5,7 @@ from tqdm import tqdm
 
 # replace the URL with the URL of the page you want to download files from
 URL = "https://class.devsamurai.com.br/" 
-DESTINATION_FOLDER = "downloads2"  
+DESTINATION_FOLDER = "downloads"  
 
 # Create the destination folder if it doesn't exist
 os.makedirs(DESTINATION_FOLDER, exist_ok=True)
