@@ -12,31 +12,49 @@ Este é um script em Python que permite baixar automaticamente arquivos listados
 
 ### Instalação das Dependências
 
+Crie um virtual env para separar as bibliotecas que serão instaladas no projeto (opcional):
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
 Use o pip para instalar as bibliotecas necessárias:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## Configuração
-
-1. Abra o arquivo do script.
-2. Substitua o valor da variável `URL` pelo link da página que contém os arquivos.
-3. Altere o valor da variável `PASTA_DESTINO` para a pasta onde os arquivos serão salvos. O padrão é `downloads`.
-
 ## Uso
 
-1. Execute o script no terminal ou prompt de comando:
+1. Execute o script no terminal ou prompt de comando, fornecendo a URL e a pasta de destino como argumentos:
 
 ```bash
-python script_download.py
+python bot.py <URL> --destination <PASTA_DESTINO>
 ```
 
+   - Substitua `<URL>` pelo link da página que contém os arquivos.
+   - Substitua `<PASTA_DESTINO>` pela pasta onde os arquivos serão salvos (opcional, o padrão é `downloads`).
+
 2. O script irá:
-   - Acessar a página especificada em `URL`.
+   - Acessar a página especificada na URL fornecida.
    - Encontrar todos os links dentro de uma estrutura `<ul><li><a>`.
    - Exibir o total de arquivos encontrados.
    - Baixar os arquivos um por um, mostrando uma barra de progresso para cada arquivo.
+
+### Exemplo de Uso
+
+Para baixar arquivos do site `https://example.com/files` para a pasta `meus_downloads`:
+
+```bash
+python bot.py https://class.devsamurai.com.br/ --destination meus_downloads
+```
+
+Se você quiser usar a pasta de destino padrão (`downloads`):
+
+```bash
+python bot.py https://class.devsamurai.com.br/
+```
 
 ### Exemplo de Saída
 
@@ -72,4 +90,3 @@ soup.select('ul.classe-especifica li a[href]')
 ## Suporte
 
 Se você tiver problemas ou perguntas, entre em contato ou abra uma solicitação de ajuda. Ficarei feliz em ajudar!
-
